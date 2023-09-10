@@ -1,25 +1,28 @@
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
+import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
+import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
+import Toolbar from "@mui/material/Toolbar";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { Link } from "react-router-dom";
+import useAuth, { loginUser } from "../auth/useAuth";
+import { logout } from "../services/apiService";
 import Logo from "./Logo";
-import { useState } from "react";
 
 const pages = ["Home", "About"];
 const settings = ["Profile", "Logout"];
 
 const NavBar = () => {
-  const [user, setUser] = useState(undefined);
+  const { currentUser, dispatch } = useAuth();
+
+  // const [user, setUser] = useState(undefined);
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -78,7 +81,14 @@ const NavBar = () => {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography textAlign="center">
+                    <Link
+                      style={{ textDecoration: "none", color: "black" }}
+                      to={`/${page}`}
+                    >
+                      {page}
+                    </Link>
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -90,21 +100,33 @@ const NavBar = () => {
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <Logo />
           </Box>
+
           {/* menu for laptop */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                  textTransform: "none",
+                  fontWeight: "20",
+                }}
               >
-                {page}
+                <Link
+                  style={{ textDecoration: "none", color: "white" }}
+                  to={`/${page}`}
+                >
+                  {page}
+                </Link>
               </Button>
             ))}
           </Box>
 
           {/* user profile menu */}
-          {user && (
+          {currentUser.isAuthenticated && (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="User Name">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -131,7 +153,7 @@ const NavBar = () => {
                   <MenuItem
                     key={setting}
                     onClick={() => {
-                      setUser(undefined);
+                      //    logout();
                       handleCloseUserMenu();
                     }}
                   >
@@ -141,15 +163,31 @@ const NavBar = () => {
               </Menu>
             </Box>
           )}
-          {!user && (
+          {!currentUser.isAuthenticated && (
             <Box sx={{ flexGrow: 0, display: "flex" }}>
               <Button
-                onClick={() => setUser({ name: "Ariel" })}
-                sx={{ my: 2, color: "white", display: "block" }}
+                onClick={() => {
+                  console.log("login");
+                  loginUser("ariel", "123", dispatch);
+                }}
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                  textTransform: "none",
+                }}
               >
+                {currentUser.user?.usreName}
                 Login
               </Button>
-              <Button sx={{ my: 2, color: "white", display: "block" }}>
+              <Button
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                  textTransform: "none",
+                }}
+              >
                 SignUp
               </Button>
             </Box>

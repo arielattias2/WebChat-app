@@ -1,13 +1,12 @@
 import { Typography } from "@mui/material";
-import React from "react";
+import { Link } from "react-router-dom";
 
 const Logo = () => {
   return (
     <Typography
       variant="h6"
       noWrap
-      component="a"
-      href="/"
+      component="div"
       sx={{
         mr: 2,
         fontFamily: "monospace",
@@ -17,7 +16,9 @@ const Logo = () => {
         textDecoration: "none",
       }}
     >
-      WebChat
+      <Link style={{ textDecoration: "none", color: "white" }} to={"/"}>
+        WebChat
+      </Link>
     </Typography>
   );
 };
